@@ -1,0 +1,105 @@
+{% extends './base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <h1>Post a Message</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <form action="/message/new" method="POST">
+            {% csrf_token %}
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="mensaje"></textarea>
+                </textarea>
+                <div class="d-grid  d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn  btn-outline-dark btn-sm ">Post a Message</button>
+                </div>
+                <input type="hidden" name="from" value="wall">
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            {%for msg in mensajes%}
+                <div class="row mt-2">
+                    <div class="col small fw-bold">
+                        {{msg.escritor.name}}- {{msg.created_at}}
+                        
+                    </div>
+                </div>
+                <div class="row m-2">
+                    <div class="col-8 ms-1" id="msg-{{msg.id}}">
+                        {{msg.texto}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-8">
+                        <a href="#" class="btn  btn-sm btn-outline-primary btn-edit" data-bs-toggle="modal" data-bs-target="#EditMsg" txt-data="msg-{{msg.id}}" >Edit</a>
+                        <a href="#" class="btn  btn-sm btn-outline-danger">Eliminar</a>
+                    </div>
+                </div>  
+                <h5>Comentarios</h5>
+                <ul>
+                    {% for comentario in msg.comentarios.all %}
+                    <li>
+                        {{comentario.texto}} 
+                        <div class="btn  btn-sm btn-outline-success">
+                            <i class="bi bi-pencil"></i>
+                        </div>
+                        <div class="btn  btn-sm btn-outline-danger">
+                            <i class="bi bi-trash"></i>
+                        </div>
+                       
+                        
+                    </li>
+                    {% empty %}
+                    <li><i>Sin comentarios aún</i> </li> 
+                    {%endfor%}
+                </ul>    
+               
+                <form action="/comentario/new" method="POST">
+                    {% csrf_token %}
+                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="comentario"></textarea>
+                    </textarea>
+                    <div class="d-grid  d-md-flex justify-content-md-end">
+                        <button type="submit" class="btn  btn-outline-dark btn-sm ">Post a comment</button>
+                    </div>
+                    <input type="hidden" name="mensaje_id" value="{{msg.id}}">
+                </form>
+            {%endfor%}
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="EditMsg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" action ="" method="GET" name="reg_del" id="reg_del">{% csrf_token %} 
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                Esta seguro que desea eliminar este registro?
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <input type="submit" class="btn btn-danger btn-eliminar" value="Eliminar">
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function() {        
+        myModal.addEventListener('shown.bs.modal', function () {            
+            myInput.focus()            
+        });    
+    });
+
+    $('.btn-edit').on('click',function(){
+        texto=$(this).attr('txt-data')
+        console.log(texto)
+    });
+    
+</script>
+{% endblock %}

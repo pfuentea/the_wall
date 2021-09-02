@@ -1,0 +1,38 @@
+{% extends './base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-8">
+            <h1>Post a Message</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            <form action="/message/new" method="POST">
+            {% csrf_token %}
+            <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="mensaje"></textarea>
+                </textarea>
+                <div class="d-grid  d-md-flex justify-content-md-end">
+                    <button type="submit" class="btn m-2  btn-outline-dark btn-sm ">Post a Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-8">
+            {%for msg in mensajes%}
+            <div class="row">
+                <div class="col small fw-bold">
+                    {{msg.escritor.name}}- {{msg.created_at}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-8 ms-3">
+                    {{msg.texto}}
+                </div>
+            </div>            
+            {%endfor%}
+        </div>
+    </div>
+</div>
+{% endblock %}
