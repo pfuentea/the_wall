@@ -46,13 +46,13 @@
                 </ul>
             </div>
             <div class="navbar-text">
+                {%if 'user' in request.session%}
                 <div class="row small">
                     <div class="col">
                         Bienvenido: {{request.session.user.name}}
                     </div>
                     
                 </div>
-             {%if 'user' in request.session%}
                 <div class="row small">
                     <div class="col">
                         <a href="/logout" >Logout
