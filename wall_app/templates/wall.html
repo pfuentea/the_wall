@@ -20,6 +20,11 @@
         </div>
     </div>
     <div class="row">
+        <div class="col">
+            <h1>MESSAGES:</h1>
+        </div>
+    </div>
+    <div class="row">
         <div class="col-8">
             {%for msg in mensajes%}
                 <div class="row mt-2">
@@ -33,40 +38,49 @@
                         {{msg.texto}}
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-8">
-                        <a href="#" class="btn  btn-sm btn-outline-primary btn-edit" data-bs-toggle="modal" data-bs-target="#EditMsg" txt-data="msg-{{msg.id}}" >Edit</a>
-                        <a href="#" class="btn  btn-sm btn-outline-danger">Eliminar</a>
+                <div class="row m-2">
+                    <div class="col-8 ms-1">
+                        <a href="#" class="btn  btn-sm btn-outline-primary btn-edit" 
+                        value="{{msg.texto}}" data-bs-toggle="modal" data-bs-target="#EditMsg" msg_id="{{msg.id}}" >Edit</a>
+                        <a href="#" msg_id="{{msg.id}}" class="btn  btn-sm btn-outline-danger btn-delete" data-bs-toggle="modal" data-bs-target="#DelMsg" >Eliminar</a>
                     </div>
                 </div>  
-                <h5>Comentarios</h5>
-                <ul>
-                    {% for comentario in msg.comentarios.all %}
-                    <li>
-                        {{comentario.texto}} 
-                        <div class="btn  btn-sm btn-outline-success">
-                            <i class="bi bi-pencil"></i>
+                <div class="row">
+                    <div class="col-11 ms-auto">
+                        <h5>Comentarios</h5>
+                        <ul>
+                            {% for comentario in msg.comentarios.all %}
+                            <li>
+                                {{comentario.texto}} 
+                                
+                                <a href="#" class="btn  btn-sm btn-outline-success btn-edit-cmt" 
+                            value="{{comentario.texto}}" data-bs-toggle="modal" data-bs-target="#EditCmt" cmt_id="{{comentario.id}}" >
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="#" cmt_id="{{comentario.id}}" class="btn  btn-sm btn-outline-danger btn-delete-cmt" data-bs-toggle="modal" data-bs-target="#DelCmt" >
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </li>
+                            {% empty %}
+                            <li><i>Sin comentarios aún</i> </li> 
+                            {%endfor%}
+                        </ul>    
+                        <div class="row mb-4">
+                            <div class="col-10">
+                                <form action="/comentario/new" method="POST">
+                                    {% csrf_token %}
+                                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="comentario"></textarea>
+                                    </textarea>
+                                    <div class="d-grid  d-md-flex justify-content-md-end mt-2">
+                                        <button type="submit" class="btn  btn-outline-dark btn-sm ">Post a comment</button>
+                                    </div>
+                                    <input type="hidden" name="mensaje_id" value="{{msg.id}}">
+                                </form>
+
+                            </div>
                         </div>
-                        <div class="btn  btn-sm btn-outline-danger">
-                            <i class="bi bi-trash"></i>
-                        </div>
-                       
-                        
-                    </li>
-                    {% empty %}
-                    <li><i>Sin comentarios aún</i> </li> 
-                    {%endfor%}
-                </ul>    
-               
-                <form action="/comentario/new" method="POST">
-                    {% csrf_token %}
-                    <textarea class="form-control" id="exampleFormControlTextarea1" rows="3" name="comentario"></textarea>
-                    </textarea>
-                    <div class="d-grid  d-md-flex justify-content-md-end">
-                        <button type="submit" class="btn  btn-outline-dark btn-sm ">Post a comment</button>
                     </div>
-                    <input type="hidden" name="mensaje_id" value="{{msg.id}}">
-                </form>
+                </div>
             {%endfor%}
         </div>
     </div>
@@ -74,31 +88,114 @@
 
 <div class="modal fade" id="EditMsg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form class="modal-content" action ="" method="GET" name="reg_del" id="reg_del">{% csrf_token %} 
+        <form class="modal-content" action ="" method="POST" name="reg_edit" id="reg_edit">{% csrf_token %} 
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Eliminar</h5>
+                <h5 class="modal-title" id="exampleModalLabel">Editar</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
-                Esta seguro que desea eliminar este registro?
+                <div class="modal-body" >
+                    <textarea class="form-control" id="modal_text" rows="3" name="texto"></textarea>   
                 </div>
                 <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <input type="submit" class="btn btn-success btn-editar" value="Guardar">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="EditCmt" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" action ="" method="POST" name="cmt_edit" id="cmt_edit">{% csrf_token %} 
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Editar Comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" >
+                    <textarea class="form-control" id="modal_text_cmt" rows="3" name="texto"></textarea>   
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <input type="submit" class="btn btn-success btn-editar" value="Guardar">
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="DelMsg" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" action ="" method="POST" name="msg_del" id="msg_del">{% csrf_token %} 
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar Mensaje</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" >
+                    Esta seguro que desea eliminar este registro?
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
                 <input type="submit" class="btn btn-danger btn-eliminar" value="Eliminar">
             </div>
         </form>
     </div>
 </div>
+
+<div class="modal fade" id="DelCmt" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="modal-content" action ="" method="POST" name="cmt_del" id="cmt_del">{% csrf_token %} 
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Eliminar Comentario</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" >
+                    Esta seguro que desea eliminar este registro?
+                </div>
+                <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cancelar</button>
+                <input type="submit" class="btn btn-danger btn-eliminar" value="Eliminar">
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
     $(document).ready(function() {        
-        myModal.addEventListener('shown.bs.modal', function () {            
+        EditMsg.addEventListener('shown.bs.modal', function () {            
             myInput.focus()            
         });    
     });
 
     $('.btn-edit').on('click',function(){
-        texto=$(this).attr('txt-data')
-        console.log(texto)
+        texto=$(this).attr('value')     
+        msg_id=$(this).attr('msg_id')     
+        $('#modal_text').val(texto)    
+        action='message/'+msg_id+'/edit'    
+        $('#reg_edit').attr('action',action)
+        console.log( action)
+    });
+
+    $('.btn-edit-cmt').on('click',function(){
+        texto=$(this).attr('value')     
+        cmt_id=$(this).attr('cmt_id')     
+        $('#modal_text_cmt').val(texto)    
+        action='comentario/'+cmt_id+'/edit'    
+        $('#cmt_edit').attr('action',action)
+        console.log( action)
+    });
+    
+
+    $('.btn-delete').on('click',function(){        
+        msg_id=$(this).attr('msg_id')
+        action='message/'+msg_id+'/destroy'    
+        $('#msg_del').attr('action',action)
+        console.log( action)
+    });
+
+    $('.btn-delete-cmt').on('click',function(){        
+        cmt_id=$(this).attr('cmt_id')
+        action='comentario/'+cmt_id+'/destroy'    
+        $('#cmt_del').attr('action',action)
+        console.log( action)
     });
     
 </script>

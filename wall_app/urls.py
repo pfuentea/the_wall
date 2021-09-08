@@ -8,6 +8,10 @@ urlpatterns = [
     path('logout', views.logout),
     path('register', views.register),
     path('message/new', views.message_new),
+    path('message/<int:msg_id>/edit', views.message_edit), 
+    path('message/<int:msg_id>/destroy', views.message_destroy), 
     path('comentario/new', views.comentario_new),
+    path('comentario/<int:cmt_id>/edit', views.comentario_edit), 
+    path('comentario/<int:cmt_id>/destroy', views.comentario_destroy),
 
 ]

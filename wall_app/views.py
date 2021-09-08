@@ -81,6 +81,14 @@ def message_new(request):
         return redirect('/'+request.POST['from'])
     return redirect('/index')
 
+def message_edit(request,msg_id):
+    mensaje_t=Mensaje.objects.get(id=msg_id)
+    mensaje_t.texto=request.POST['texto']
+    print(f'id:{msg_id},m:{mensaje_t.texto}')
+    mensaje_t.save()
+    messages.success(request,'Mensaje modificado con exito.')
+    return redirect('/wall')
+
 #aca van los mensajes con sus comentarios
 def wall(request):
     mensajes=Mensaje.objects.all().order_by('-created_at')
@@ -91,11 +99,30 @@ def wall(request):
 
     
 def comentario_new(request):
-
     usuario_id=request.session['user']['id']
     mensaje_id=request.POST['mensaje_id']
     comentario=request.POST['comentario']
     escritor=User.objects.get(id=usuario_id)
     msg=Mensaje.objects.get(id=mensaje_id)
     Comentario.objects.create(texto=comentario,escritor=escritor,mensaje=msg)
+    return redirect('/wall')
+
+def comentario_edit(request,cmt_id):
+    target=Comentario.objects.get(id=cmt_id)
+    target.texto=request.POST['texto']
+    print(f'id:{cmt_id},m:{target.texto}')
+    target.save()
+    messages.success(request,'Comentario modificado con exito.')
+    return redirect('/wall')
+
+def comentario_destroy(request,cmt_id):
+    target=Comentario.objects.get(id=cmt_id)
+    target.delete()
+    messages.success(request,'Comentario eliminado con exito.')
+    return redirect('/wall')
+
+def message_destroy(request,msg_id):
+    target=Mensaje.objects.get(id=msg_id)
+    target.delete()
+    messages.success(request,'Mensaje eliminado con exito.')
     return redirect('/wall')
